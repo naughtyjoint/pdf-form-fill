@@ -8,25 +8,30 @@ use mikehaertl\pdftk\Pdf;
 
 class PdfController extends Controller
 {
-    function pdfGenerator() {
+    function pdfGenerator(Request $request) {
+
+        $data = $request->all();
+
+        $formId = $data['formId'];
+        $formDataAry = $data['data'];
 
         // Fill form with data array
-        $pdf = new Pdf('pdf_file/TT2_form.pdf');
-        $dataArray = [
-            'Name'=>'John Doe',
-            'Mobile' => '0932857032',
-            'Email' => 'johnDoe@hipr.com'
-        ];
+        $pdf = new Pdf("pdf_file/uscis_forms/$formId.pdf");
 
-        $pdf->fillForm($dataArray)
+
+        $pdf->fillForm($formDataAry)
             ->needAppearances();
+        $filePath = "pdf_file/uscis_forms/${formId}_filled.pdf";
 
-        if (!$pdf->saveAs('pdf_file/filled.pdf')) {
+        if (!$pdf->saveAs($filePath)) {
             $error = $pdf->getError();
-            echo $error;
+            return [
+                'status' => '500',
+                'error_msg' => $error,
+                ];
         }
 
-        return response()->download('pdf_file/filled.pdf')->deleteFileAfterSend();
+        return response()->download($filePath)->deleteFileAfterSend();
     }
 
 }

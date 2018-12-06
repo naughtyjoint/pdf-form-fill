@@ -17,5 +17,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/pdf_form_fill', 'PdfController@pdfGenerator');
+Route::post('/pdf_form_fill', 'PdfController@pdfGenerator');
 
